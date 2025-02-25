@@ -1,6 +1,6 @@
 project(MyCppProject)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
 
 # Specify the source files for the executable
 file(GLOB_RECURSE SOURCES
