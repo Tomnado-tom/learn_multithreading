@@ -2,17 +2,17 @@
 #include <library/library.h>
 #include <atomic>
 #include <thread>
-#include <latch>
+#include <barrier>
+#include <mutex>
 
 std::atomic_bool shared_flag;
-int shared_data = 0;
+uint64_t shared_data = 0;
 
-std::latch work_done1{ 5 };
-std::latch work_done2{ 5 };
+std::barrier barrier{ 5 };
 
 void IncrementSharedRelaxedIssues()
 {
-    work_done1.arrive_and_wait();
+    barrier.arrive_and_wait();
     for (int count{ 0 }; count < 1000000;)
     {
         bool expected = false;
@@ -27,7 +27,7 @@ void IncrementSharedRelaxedIssues()
 
 void IncrementSharedFence()
 {
-    work_done2.arrive_and_wait();
+    barrier.arrive_and_wait();
     for (int count{ 0 }; count < 1000000;)
     {
         bool expected = false;
@@ -40,11 +40,33 @@ void IncrementSharedFence()
     }
 }
 
+void IncrementSharedUnsafe()
+{
+    barrier.arrive_and_wait();
+    for (int count{ 0 }; count < 1000000;)
+    {
+        shared_data++;
+        count++;
+    }
+}
+
+std::mutex shared_mutex;
+
+void IncrementSharedWithMutex()
+{
+    barrier.arrive_and_wait();
+    for (int count{ 0 }; count < 1000000;)
+    {
+        std::lock_guard<std::mutex> lock(shared_mutex);
+        shared_data++;
+        count++;
+    }
+}
+
 
 int main()
 {
     {
-
         std::jthread thread1(&IncrementSharedRelaxedIssues);
         std::jthread thread2(&IncrementSharedRelaxedIssues);
         std::jthread thread3(&IncrementSharedRelaxedIssues);
@@ -62,6 +84,25 @@ int main()
         std::jthread thread5(&IncrementSharedFence);
     }
 
+    std::cout << "Shared data: " << shared_data << std::endl;
+
+    shared_data = 0;
+    {
+        std::jthread thread1(&IncrementSharedWithMutex);
+        std::jthread thread2(&IncrementSharedWithMutex);
+        std::jthread thread3(&IncrementSharedWithMutex);
+        std::jthread thread4(&IncrementSharedWithMutex);
+        std::jthread thread5(&IncrementSharedWithMutex);
+    }
+    std::cout << "Shared data: " << shared_data << std::endl;
+    shared_data = 0;
+    {
+        std::jthread thread1(&IncrementSharedUnsafe);
+        std::jthread thread2(&IncrementSharedUnsafe);
+        std::jthread thread3(&IncrementSharedUnsafe);
+        std::jthread thread4(&IncrementSharedUnsafe);
+        std::jthread thread5(&IncrementSharedUnsafe);
+    }
     std::cout << "Shared data: " << shared_data << std::endl;
 
     return 0;

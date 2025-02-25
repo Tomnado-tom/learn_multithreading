@@ -67,6 +67,8 @@
         "string_view": "cpp",
         "numbers": "cpp",
         "semaphore": "cpp",
-        "latch": "cpp"
+        "latch": "cpp",
+        "barrier": "cpp",
+        "mutex": "cpp"
     }
 }
