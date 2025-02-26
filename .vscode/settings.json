@@ -70,6 +70,22 @@
         "latch": "cpp",
         "barrier": "cpp",
         "mutex": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "any": "cpp",
+        "condition_variable": "cpp",
+        "csignal": "cpp",
+        "forward_list": "cpp",
+        "fstream": "cpp",
+        "iomanip": "cpp",
+        "list": "cpp",
+        "map": "cpp",
+        "optional": "cpp",
+        "set": "cpp",
+        "span": "cpp",
+        "sstream": "cpp",
+        "unordered_set": "cpp",
+        "variant": "cpp",
+        "xhash": "cpp",
+        "xtree": "cpp"
     }
 }
