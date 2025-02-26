@@ -69,6 +69,7 @@
         "semaphore": "cpp",
         "latch": "cpp",
         "barrier": "cpp",
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "chrono": "cpp"
     }
 }
